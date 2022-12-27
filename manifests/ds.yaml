@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: workerbee
+  namespace: workerbee
+spec:
+  selector:
+    matchLabels:
+      name: workerbee
+  template:
+    metadata:
+      labels:
+        name: workerbee
+    spec:
+      securityContext:
+        runAsUser: 1001
+      containers:
+      - name: workerbee
+        image: payaljain/workerbee:1
+        command:
+        - ./workerbee
+        args:
+        - --loc=/downloads
+        - workerbee-bucket1
+        - workerbee-bucket2
+        volumeMounts:
+        - name: libraries
+          mountPath: /downloads
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: libraries
+        hostPath:
+          path: /var/workerbee
